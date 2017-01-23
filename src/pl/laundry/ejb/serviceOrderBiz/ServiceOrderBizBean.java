@@ -9,6 +9,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import pl.laundry.ejb.serviceOrder.entity.ServiceOrderEntity;
+import pl.laundry.ejb.serviceOrder.entity.ServicePositionEntity;
 import pl.laundry.ejb.serviceOrderDao.ServiceOrderDao;
 
 /**
@@ -30,6 +31,11 @@ public class ServiceOrderBizBean implements ServiceOrderBiz {
 	@Override
 	public List<ServiceOrderEntity> retrieveOrders() {
 		return serviceDao.retrieveOrders();
+	}
+
+	@Override
+	public List<ServicePositionEntity> findPositionsByOrderNo(long orderNo) {
+		return serviceDao.findPositionsByOrderNo(orderNo);
 	}
 
 }

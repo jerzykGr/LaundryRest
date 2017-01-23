@@ -1,80 +1,82 @@
 package pl.laundry.ejb.serviceOrder.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EntityResult;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import pl.laundry.ejb.commons.entityManager.Money;
+import pl.laundry.ejb.customer.entity.CustomerEntity;
 
 @Entity
 @Table(name = "SERVICE_ORDER")
 @SequenceGenerator(name = "SERVICE_SEQUENCE_GENERATOR", sequenceName = "SEQ_SERVICE_ORDER", allocationSize = 1)
 
-@NamedQueries({
-		@NamedQuery(name = "retrieveOrders", query = "SELECT s FROM ServiceOrderEntity s JOIN FETCH s.servicePositions") })
+@SqlResultSetMapping(name = "ServiceOrder.serviceAndCustomerMapping", entities = {
+		@EntityResult(entityClass = ServiceOrderEntity.class) })
+
 public class ServiceOrderEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SERVICE_SEQUENCE_GENERATOR")
-	@Column(name = "ORDER_NO")
+	public static final String SERVICE_CUSTOMER_MAPPING = "ServiceOrder.serviceAndCustomerMapping";
+
 	private long orderNo;
 
-	@Temporal(TemporalType.DATE)
-	@Column(name = "ORDER_DATE")
 	private Date orderDate;
 
-	@Column(name = "SUBTOTAL")
-	private long subtotal;
+	private BigDecimal subtotal;
 
-	@Column(name = "SURCHARGE_EXPRESS_PERCENTAGE")
-	private long surchargeExpressPercentage;
+	private BigDecimal surchargeExpressPercentage;
 
-	@Column(name = "SURCHARGE_EXPRESS_AMOUNT")
-	private long surchargeExpressAmount;
+	private BigDecimal surchargeExpressAmount;
 
-	@Column(name = "GRANDTOTAL")
-	private long grandTotal;
+	private Money grandTotal;
 
-	@Column(name = "DESCRIBE")
 	private String describe;
 
-	@OneToMany(cascade = { CascadeType.ALL })
-	@JoinColumn(name = "ORDER_NO")
-	private List<ServicePositionEntity> servicePositions;
+	private CustomerEntity customer;
 
 	/**
-	 * @return the servicePositions
+	 * @return the customer
 	 */
-	public List<ServicePositionEntity> getServicePositions() {
-		return servicePositions;
+
+	@ManyToOne
+	@JoinColumn(name = "CUSTOMER_ID")
+	public CustomerEntity getCustomer() {
+		return customer;
 	}
 
 	/**
-	 * @param servicePositions
-	 *            the servicePositions to set
+	 * @param customer
+	 *            the customer to set
 	 */
-	public void setServicePositions(List<ServicePositionEntity> servicePositions) {
-		this.servicePositions = servicePositions;
+	public void setCustomer(CustomerEntity customer) {
+		this.customer = customer;
 	}
 
 	/**
 	 * @return the orderNo
 	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SERVICE_SEQUENCE_GENERATOR")
+	@Column(name = "ORDER_NO")
 	public long getOrderNo() {
 		return orderNo;
 	}
@@ -90,6 +92,8 @@ public class ServiceOrderEntity implements Serializable {
 	/**
 	 * @return the orderDate
 	 */
+	@Temporal(TemporalType.DATE)
+	@Column(name = "ORDER_DATE")
 	public Date getOrderDate() {
 		return orderDate;
 	}
@@ -105,7 +109,8 @@ public class ServiceOrderEntity implements Serializable {
 	/**
 	 * @return the subtotal
 	 */
-	public long getSubtotal() {
+	@Column(name = "SUBTOTAL")
+	public BigDecimal getSubtotal() {
 		return subtotal;
 	}
 
@@ -113,14 +118,15 @@ public class ServiceOrderEntity implements Serializable {
 	 * @param subtotal
 	 *            the subtotal to set
 	 */
-	public void setSubtotal(long subtotal) {
+	public void setSubtotal(BigDecimal subtotal) {
 		this.subtotal = subtotal;
 	}
 
 	/**
 	 * @return the surchargeExpressPercentage
 	 */
-	public long getSurchargeExpressPercentage() {
+	@Column(name = "SURCHARGE_EXPRESS_PERCENTAGE")
+	public BigDecimal getSurchargeExpressPercentage() {
 		return surchargeExpressPercentage;
 	}
 
@@ -128,14 +134,15 @@ public class ServiceOrderEntity implements Serializable {
 	 * @param surchargeExpressPercentage
 	 *            the surchargeExpressPercentage to set
 	 */
-	public void setSurchargeExpressPercentage(long surchargeExpressPercentage) {
+	public void setSurchargeExpressPercentage(BigDecimal surchargeExpressPercentage) {
 		this.surchargeExpressPercentage = surchargeExpressPercentage;
 	}
 
 	/**
 	 * @return the surchargeExpressAmount
 	 */
-	public long getSurchargeExpressAmount() {
+	@Column(name = "SURCHARGE_EXPRESS_AMOUNT")
+	public BigDecimal getSurchargeExpressAmount() {
 		return surchargeExpressAmount;
 	}
 
@@ -143,14 +150,16 @@ public class ServiceOrderEntity implements Serializable {
 	 * @param surchargeExpressAmount
 	 *            the surchargeExpressAmount to set
 	 */
-	public void setSurchargeExpressAmount(long surchargeExpressAmount) {
+	public void setSurchargeExpressAmount(BigDecimal surchargeExpressAmount) {
 		this.surchargeExpressAmount = surchargeExpressAmount;
 	}
 
 	/**
 	 * @return the grandTotal
 	 */
-	public long getGrandTotal() {
+	@Embedded
+	@AttributeOverrides({ @AttributeOverride(name = "amount", column = @Column(name = "GRANDTOTAL")) })
+	public Money getGrandTotal() {
 		return grandTotal;
 	}
 
@@ -158,13 +167,14 @@ public class ServiceOrderEntity implements Serializable {
 	 * @param grandTotal
 	 *            the grandTotal to set
 	 */
-	public void setGrandTotal(long grandTotal) {
+	public void setGrandTotal(Money grandTotal) {
 		this.grandTotal = grandTotal;
 	}
 
 	/**
 	 * @return the describe
 	 */
+	@Column(name = "DESCRIBE")
 	public String getDescribe() {
 		return describe;
 	}

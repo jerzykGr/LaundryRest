@@ -5,7 +5,9 @@ package pl.laundry.ejb.serviceOrder.entity;
 
 import java.io.Serializable;
 
+import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,6 +16,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import pl.laundry.ejb.clothes.ClothesDictEntity;
+import pl.laundry.ejb.commons.entityManager.Money;
 
 /**
  * @author Administrator
@@ -26,27 +31,23 @@ public class ServicePositionEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name = "POSITION_ID")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "POSITION_SEQUENCE_GENERATOR")
 	private long positionId;
 
-	@Column(name = "QTY")
 	private int qty;
 
-	@Column(name = "PRICE")
-	private float price;
+	private Money price;
 
-	@Column(name = "CURRENCY")
-	private String currency;
- 
-	@ManyToOne
-	@JoinColumn(name = "SERVICE_DICT_ID")
 	private ServiceDictEntity serviceDict;
+
+	private ClothesDictEntity clothesDict;
+
+	private long orderNo;
 
 	/**
 	 * @return the serviceDict
 	 */
+	@ManyToOne
+	@JoinColumn(name = "SERVICE_DICT_ID")
 	public ServiceDictEntity getServiceDict() {
 		return serviceDict;
 	}
@@ -60,8 +61,28 @@ public class ServicePositionEntity implements Serializable {
 	}
 
 	/**
+	 * @return the clothesDict
+	 */
+	@ManyToOne
+	@JoinColumn(name = "CLOTHES_DICT_ID")
+	public ClothesDictEntity getClothesDict() {
+		return clothesDict;
+	}
+
+	/**
+	 * @param clothesDict
+	 *            the clothesDict to set
+	 */
+	public void setClothesDict(ClothesDictEntity clothesDict) {
+		this.clothesDict = clothesDict;
+	}
+
+	/**
 	 * @return the positionId
 	 */
+	@Id
+	@Column(name = "POSITION_ID")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "POSITION_SEQUENCE_GENERATOR")
 	public long getPositionId() {
 		return positionId;
 	}
@@ -77,6 +98,7 @@ public class ServicePositionEntity implements Serializable {
 	/**
 	 * @return the qty
 	 */
+	@Column(name = "QTY")
 	public int getQty() {
 		return qty;
 	}
@@ -92,7 +114,9 @@ public class ServicePositionEntity implements Serializable {
 	/**
 	 * @return the price
 	 */
-	public float getPrice() {
+	@Embedded
+	@AttributeOverride(name = "amount", column = @Column(name = "PRICE"))
+	public Money getPrice() {
 		return price;
 	}
 
@@ -100,23 +124,24 @@ public class ServicePositionEntity implements Serializable {
 	 * @param price
 	 *            the price to set
 	 */
-	public void setPrice(float price) {
+	public void setPrice(Money price) {
 		this.price = price;
 	}
 
 	/**
-	 * @return the currency
+	 * @return the orderNo
 	 */
-	public String getCurrency() {
-		return currency;
+	@Column(name = "ORDER_NO")
+	public long getOrderNo() {
+		return orderNo;
 	}
 
 	/**
-	 * @param currency
-	 *            the currency to set
+	 * @param orderNo
+	 *            the orderNo to set
 	 */
-	public void setCurrency(String currency) {
-		this.currency = currency;
+	public void setOrderNo(long orderNo) {
+		this.orderNo = orderNo;
 	}
 
 }

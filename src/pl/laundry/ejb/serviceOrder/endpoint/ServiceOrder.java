@@ -6,14 +6,11 @@ import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 
 import pl.laundry.ejb.serviceOrder.entity.ServiceOrderEntity;
+import pl.laundry.ejb.serviceOrder.entity.ServicePositionEntity;
 import pl.laundry.ejb.serviceOrderBiz.ServiceOrderBiz;
-import pl.laundry.ejb.serviceOrderDao.ServiceOrderDao;
 
 @ManagedBean
 public class ServiceOrder implements IServiceOrder {
-
-	@EJB
-	private ServiceOrderDao serviceDao;
 
 	@EJB
 	private ServiceOrderBiz serviceBiz;
@@ -40,6 +37,12 @@ public class ServiceOrder implements IServiceOrder {
 	public long findOrder(long orderNo) throws Exception {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public List<ServicePositionEntity> findPositionsByOrderNo(long orderNo) {
+
+		return serviceBiz.findPositionsByOrderNo(orderNo);
 	}
 
 }

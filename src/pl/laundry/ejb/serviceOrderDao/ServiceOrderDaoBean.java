@@ -5,8 +5,10 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import pl.laundry.ejb.serviceOrder.entity.ServiceOrderEntity;
+import pl.laundry.ejb.serviceOrder.entity.ServicePositionEntity;
 
 @Stateless
 public class ServiceOrderDaoBean implements ServiceOrderDao {
@@ -33,7 +35,22 @@ public class ServiceOrderDaoBean implements ServiceOrderDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ServiceOrderEntity> retrieveOrders() {
-		return entityManager.createNamedQuery("retrieveOrders").getResultList();
+
+		return entityManager.createNativeQuery("SELECT so.*,'PLN' as currency FROM SERVICE_ORDER so",
+				ServiceOrderEntity.SERVICE_CUSTOMER_MAPPING).getResultList();
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ServicePositionEntity> findPositionsByOrderNo(long orderNo) {
+
+		Query query = entityManager
+				.createQuery("SELECT sp FROM ServicePositionEntity sp" + " WHERE sp.orderNo = :orderNo");
+
+		query.setParameter("orderNo", orderNo);
+
+		return query.getResultList();
 	}
 
 }
