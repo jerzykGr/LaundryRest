@@ -7,13 +7,13 @@ import javax.faces.bean.ManagedBean;
 
 import pl.laundry.ejb.serviceOrder.entity.ServiceOrderEntity;
 import pl.laundry.ejb.serviceOrder.entity.ServicePositionEntity;
-import pl.laundry.ejb.serviceOrderBiz.ServiceOrderBiz;
+import pl.laundry.ejb.serviceOrderBiz.ServiceOrderBizLocal;
 
 @ManagedBean
 public class ServiceOrder implements IServiceOrder {
 
 	@EJB
-	private ServiceOrderBiz serviceBiz;
+	private ServiceOrderBizLocal serviceBiz;
 
 	@Override
 	public String sayHello(String name) throws Exception {

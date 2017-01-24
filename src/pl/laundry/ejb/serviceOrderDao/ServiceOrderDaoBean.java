@@ -45,9 +45,10 @@ public class ServiceOrderDaoBean implements ServiceOrderDao {
 	@Override
 	public List<ServicePositionEntity> findPositionsByOrderNo(long orderNo) {
 
-		Query query = entityManager
-				.createQuery("SELECT sp FROM ServicePositionEntity sp" + " WHERE sp.orderNo = :orderNo");
-
+		Query query = entityManager.createNativeQuery("SELECT sop.position_id, sop.qty, sop.price, sop.currency,"
+				+ " sop.order_no, sop.clothes_dict_id, sd.code FROM SERVICE_ORDER_POSITIONS sop "
+				+ " JOIN SERVICE_DICT sd on sd.DICT_ID = sop.SERVICE_DICT_ID" + " WHERE sop.order_no = :orderNo",
+				ServicePositionEntity.class);
 		query.setParameter("orderNo", orderNo);
 
 		return query.getResultList();

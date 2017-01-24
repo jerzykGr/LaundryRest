@@ -7,20 +7,20 @@ package pl.laundry.ejb.serviceOrder.enums;
  * @author Administrator
  *
  */
-public enum ServiceKind {
+public enum ServiceDict {
 
-	LAUNDRY("LAUNDRY"),
+	LAUNDRY("LNDR"),
 
-	DRY_CLEANING("DRY");
+	DRY_CLEANING("DCLN");
 
 	private final String code;
 
-	private ServiceKind(String code) {
+	private ServiceDict(String code) {
 		this.code = code;
 	}
 
-	public static ServiceKind getByCode(String code) {
-		for (ServiceKind e : values()) {
+	public static ServiceDict getByCode(String code) {
+		for (ServiceDict e : values()) {
 			if (e.code.equals(code))
 				return e;
 		}

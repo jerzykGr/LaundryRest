@@ -6,6 +6,8 @@ package pl.laundry.ejb.serviceOrderBiz;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 
 import pl.laundry.ejb.serviceOrder.entity.ServiceOrderEntity;
@@ -17,23 +19,22 @@ import pl.laundry.ejb.serviceOrderDao.ServiceOrderDao;
  *
  */
 @Stateless
-public class ServiceOrderBizBean implements ServiceOrderBiz {
+@Local(ServiceOrderBizLocal.class)
+@Remote(ServiceOrderBizRemote.class)
+public class ServiceOrderBizBean {
 
 	@EJB
 	private ServiceOrderDao serviceDao;
 
-	@Override
 	public void createOrder(ServiceOrderEntity service) {
 		serviceDao.createOrder(service);
 
 	}
 
-	@Override
 	public List<ServiceOrderEntity> retrieveOrders() {
 		return serviceDao.retrieveOrders();
 	}
 
-	@Override
 	public List<ServicePositionEntity> findPositionsByOrderNo(long orderNo) {
 		return serviceDao.findPositionsByOrderNo(orderNo);
 	}
