@@ -36,8 +36,28 @@ public class ServiceOrderDaoBean implements ServiceOrderDao {
 	@Override
 	public List<ServiceOrderEntity> retrieveOrders() {
 
-		return entityManager.createNativeQuery("SELECT so.*,'PLN' as currency FROM SERVICE_ORDER so",
-				ServiceOrderEntity.SERVICE_CUSTOMER_MAPPING).getResultList();
+		return entityManager.createNativeQuery(
+				"SELECT so.*, sp.position_id, sp.qty, sp.price, sp.currency, "
+						+ " sp.order_no, sp.clothes_dict_id, sp.service_dict_id FROM SERVICE_ORDER so "
+						+ " JOIN SERVICE_ORDER_POSITIONS sp on sp.order_no = so.order_no "
+						+ " JOIN SERVICE_DICT sd on sd.DICT_ID = sp.SERVICE_DICT_ID",
+				ServiceOrderEntity.SERVICE_ORDER_MAPPING).getResultList();
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ServiceOrderDTO> retrieveOrderHeaders() {
+
+		return entityManager.createNativeQuery(
+				"SELECT so.order_no, so.order_date, so.subtotal, so.surcharge_express_percentage, "
+						+ " so.surcharge_express_amount, so.grandtotal, so.describe, c.name ||' '||cc.card_no as customer, count(sp.position_id) as positionsCount"
+						+ " FROM SERVICE_ORDER so " + " JOIN CUSTOMER c on c.cust_id = so.customer_id"
+						+ " JOIN CUSTOMER_CARD cc on cc.card_id = c.card_id"
+						+ " JOIN SERVICE_ORDER_POSITIONS sp on sp.order_no = so.order_no "
+						+ " GROUP BY so.order_no, so.order_date, so.subtotal, so.surcharge_express_percentage, "
+						+ " so.surcharge_express_amount, so.grandtotal, so.describe, c.name ||' '||cc.card_no",
+				ServiceOrderEntity.SERVICE_ORDER_HEADER_MAPPING).getResultList();
 
 	}
 

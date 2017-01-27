@@ -2,40 +2,59 @@ package pl.laundry.ejb.serviceOrder.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityResult;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.SqlResultSetMapping;
+import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import pl.laundry.ejb.commons.entityManager.Money;
 import pl.laundry.ejb.customer.entity.CustomerEntity;
+import pl.laundry.ejb.serviceOrderDao.ServiceOrderDTO;
 
 @Entity
 @Table(name = "SERVICE_ORDER")
 @SequenceGenerator(name = "SERVICE_SEQUENCE_GENERATOR", sequenceName = "SEQ_SERVICE_ORDER", allocationSize = 1)
 
-@SqlResultSetMapping(name = "ServiceOrder.serviceAndCustomerMapping", entities = {
-		@EntityResult(entityClass = ServiceOrderEntity.class) })
+@SqlResultSetMappings({ @SqlResultSetMapping(name = "ServiceOrder.serviceOrderMapping", entities = {
+		@EntityResult(entityClass = ServiceOrderEntity.class) }),
+
+		@SqlResultSetMapping(name = "ServiceOrder.serviceOrderHeaderMapping", classes = @ConstructorResult(targetClass = ServiceOrderDTO.class, columns = {
+				@ColumnResult(name = "order_no", type = BigDecimal.class),
+				@ColumnResult(name = "order_date", type = Date.class),
+				@ColumnResult(name = "subtotal", type = BigDecimal.class),
+				@ColumnResult(name = "surcharge_express_percentage", type = BigDecimal.class),
+				@ColumnResult(name = "surcharge_express_amount", type = BigDecimal.class),
+				@ColumnResult(name = "grandtotal", type = BigDecimal.class), @ColumnResult(name = "describe"),
+				@ColumnResult(name = "customer"), @ColumnResult(name = "positionsCount", type = Integer.class) })) })
 
 public class ServiceOrderEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String SERVICE_CUSTOMER_MAPPING = "ServiceOrder.serviceAndCustomerMapping";
+	public static final String SERVICE_ORDER_MAPPING = "ServiceOrder.serviceOrderMapping";
+	public static final String SERVICE_ORDER_HEADER_MAPPING = "ServiceOrder.serviceOrderHeaderMapping";
 
 	private long orderNo;
 
@@ -52,6 +71,8 @@ public class ServiceOrderEntity implements Serializable {
 	private String describe;
 
 	private CustomerEntity customer;
+
+	private List<ServicePositionEntity> positions = Arrays.asList();
 
 	/**
 	 * @return the customer
@@ -185,6 +206,24 @@ public class ServiceOrderEntity implements Serializable {
 	 */
 	public void setDescribe(String describe) {
 		this.describe = describe;
+	}
+
+	/**
+	 * @return the positions
+	 */
+
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@JoinColumn(name = "ORDER_NO")
+	public List<ServicePositionEntity> getPositions() {
+		return positions;
+	}
+
+	/**
+	 * @param positions
+	 *            the positions to set
+	 */
+	public void setPositions(List<ServicePositionEntity> positions) {
+		this.positions = positions;
 	}
 
 }

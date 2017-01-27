@@ -20,6 +20,11 @@ public interface ServiceOrderDao {
 	public List<ServiceOrderEntity> retrieveOrders();
 
 	/**
+	 * @return
+	 */
+	public List<ServiceOrderDTO> retrieveOrderHeaders();
+
+	/**
 	 * @param orderId
 	 * @return
 	 */

@@ -9,6 +9,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import pl.laundry.ejb.serviceOrder.enums.ServiceDict;
 
 /**
  * @author Administrator
@@ -22,11 +25,9 @@ public class ServiceDictEntity implements Serializable {
 
 	private long dictId;
 
-	private String name;
-
 	private String describe;
 
-	private String code;
+	private ServiceDict serviceDict;
 
 	/**
 	 * @return the dictId
@@ -46,22 +47,6 @@ public class ServiceDictEntity implements Serializable {
 	}
 
 	/**
-	 * @return the name
-	 */
-	@Column(name = "NAME")
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	/**
 	 * @return the describe
 	 */
 	@Column(name = "DESCRIBE")
@@ -77,20 +62,32 @@ public class ServiceDictEntity implements Serializable {
 		this.describe = describe;
 	}
 
-	/**
-	 * @return the code
-	 */
 	@Column(name = "CODE")
-	public String getCode() {
-		return code;
+	protected String getDBServiceDict() {
+		return serviceDict == null ? null : serviceDict.getCode();
 	}
 
 	/**
-	 * @param code
-	 *            the code to set
+	 * @param serviceDict
+	 *            the serviceDict to set
 	 */
-	public void setCode(String code) {
-		this.code = code;
+	protected void setDBServiceDict(String dbValue) {
+		this.serviceDict = ServiceDict.getByCode(dbValue);
 	}
 
+	/**
+	 * @return the serviceDict
+	 */
+	@Transient
+	public ServiceDict getServiceDict() {
+		return serviceDict;
+	}
+
+	/**
+	 * @param serviceDict
+	 *            the serviceDict to set
+	 */
+	public void setServiceDict(ServiceDict serviceDict) {
+		this.serviceDict = serviceDict;
+	}
 }

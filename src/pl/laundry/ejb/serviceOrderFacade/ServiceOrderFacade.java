@@ -1,11 +1,9 @@
 /**
  * 
  */
-package pl.laundry.ejb.serviceOrderBiz;
+package pl.laundry.ejb.serviceOrderFacade;
 
 import java.util.List;
-
-import javax.ejb.Local;
 
 import pl.laundry.ejb.serviceOrder.entity.ServiceOrderEntity;
 import pl.laundry.ejb.serviceOrder.entity.ServicePositionEntity;
@@ -15,8 +13,7 @@ import pl.laundry.ejb.serviceOrderDao.ServiceOrderDTO;
  * @author Administrator
  *
  */
-@Local
-public interface ServiceOrderBiz {
+public interface ServiceOrderFacade {
 	/**
 	 * @param service
 	 */
@@ -37,15 +34,4 @@ public interface ServiceOrderBiz {
 	 * @return
 	 */
 	public List<ServicePositionEntity> findPositionsByOrderNo(long orderNo);
-
-	/**
-	 * @param custId
-	 */
-	public void setCustomerId(long custId);
-
-	public void setSubTotalAmount();
-
-	public void setSuperChargeAmount();
-
-	public void setGrandTotalAmount();
 }

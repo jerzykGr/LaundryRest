@@ -16,11 +16,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import pl.laundry.ejb.clothes.ClothesDictEntity;
 import pl.laundry.ejb.commons.entityManager.Money;
-import pl.laundry.ejb.serviceOrder.enums.ServiceDict;
 
 /**
  * @author Administrator
@@ -39,27 +37,9 @@ public class ServicePositionEntity implements Serializable {
 
 	private Money price;
 
-	private ServiceDict serviceDict;
-
 	private ClothesDictEntity clothesDict;
 
-	private long orderNo;
-
-	/**
-	 * @return the serviceDict
-	 */
-	@Column(name = "CODE")
-	protected String getDBServiceDict() {
-		return serviceDict == null ? null : serviceDict.getCode();
-	}
-
-	/**
-	 * @param serviceDict
-	 *            the serviceDict to set
-	 */
-	protected void setDBServiceDict(String dbValue) {
-		this.serviceDict = ServiceDict.getByCode(dbValue);
-	}
+	private ServiceDictEntity serviceDictId;
 
 	/**
 	 * @return the clothesDict
@@ -130,35 +110,19 @@ public class ServicePositionEntity implements Serializable {
 	}
 
 	/**
-	 * @return the orderNo
+	 * @return the serviceDictId
 	 */
-	@Column(name = "ORDER_NO")
-	public long getOrderNo() {
-		return orderNo;
+	@ManyToOne
+	@JoinColumn(name = "SERVICE_DICT_ID")
+	public ServiceDictEntity getServiceDictId() {
+		return serviceDictId;
 	}
 
 	/**
-	 * @param orderNo
-	 *            the orderNo to set
+	 * @param serviceDictId
+	 *            the serviceDictId to set
 	 */
-	public void setOrderNo(long orderNo) {
-		this.orderNo = orderNo;
+	public void setServiceDictId(ServiceDictEntity serviceDictId) {
+		this.serviceDictId = serviceDictId;
 	}
-
-	/**
-	 * @return the serviceDict
-	 */
-	@Transient
-	public ServiceDict getServiceDict() {
-		return serviceDict;
-	}
-
-	/**
-	 * @param serviceDict
-	 *            the serviceDict to set
-	 */
-	public void setServiceDict(ServiceDict serviceDict) {
-		this.serviceDict = serviceDict;
-	}
-
 }

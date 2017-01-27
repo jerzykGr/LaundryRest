@@ -7,13 +7,14 @@ import javax.faces.bean.ManagedBean;
 
 import pl.laundry.ejb.serviceOrder.entity.ServiceOrderEntity;
 import pl.laundry.ejb.serviceOrder.entity.ServicePositionEntity;
-import pl.laundry.ejb.serviceOrderBiz.ServiceOrderBizLocal;
+import pl.laundry.ejb.serviceOrderDao.ServiceOrderDTO;
+import pl.laundry.ejb.serviceOrderFacade.ServiceOrderFacadeRemote;
 
 @ManagedBean
 public class ServiceOrder implements IServiceOrder {
 
 	@EJB
-	private ServiceOrderBizLocal serviceBiz;
+	private ServiceOrderFacadeRemote serviceFacade;
 
 	@Override
 	public String sayHello(String name) throws Exception {
@@ -23,13 +24,18 @@ public class ServiceOrder implements IServiceOrder {
 
 	@Override
 	public List<ServiceOrderEntity> retrieveOrders() {
-		List<ServiceOrderEntity> sv = serviceBiz.retrieveOrders();
+		List<ServiceOrderEntity> sv = serviceFacade.retrieveOrders();
+		return sv;
+	}
+
+	public List<ServiceOrderDTO> retrieveOrderHeaders() {
+		List<ServiceOrderDTO> sv = serviceFacade.retrieveOrderHeaders();
 		return sv;
 	}
 
 	@Override
 	public void createOrder(ServiceOrderEntity service) {
-		serviceBiz.createOrder(service);
+		serviceFacade.createOrder(service);
 
 	}
 
@@ -42,7 +48,7 @@ public class ServiceOrder implements IServiceOrder {
 	@Override
 	public List<ServicePositionEntity> findPositionsByOrderNo(long orderNo) {
 
-		return serviceBiz.findPositionsByOrderNo(orderNo);
+		return serviceFacade.findPositionsByOrderNo(orderNo);
 	}
 
 }
